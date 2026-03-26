@@ -9,13 +9,11 @@
 
 namespace sl2 {
 
-    // 1. COLOR (RGBA Floats)
     struct Color {
         float r, g, b, a;
         Color(float r = 0, float g = 0, float b = 0, float a = 1) : r(r), g(g), b(b), a(a) {}
     };
 
-    // 2. TIME & 3. CLOCK
     class Time { public: float s; float AsSeconds() const { return s; } };
     class Clock {
     public:
@@ -25,17 +23,13 @@ namespace sl2 {
         long long m_last;
     };
 
-    // 4. FILE (Safe Resource Loader)
     class File {
     public:
         static std::string Include(const std::string& path);
-        // Returns raw pixel data (RGBA)
         static std::vector<unsigned char> LoadPNG(const std::string& path, int& w, int& h);
-        // Returns raw PCM audio data
         static std::vector<unsigned char> LoadWAV(const std::string& path, int& freq);
     };
 
-    // 5. KEY (Consolidated Input using OpenGL/ASCII codes)
     class Key {
     public:
         enum Code {
@@ -54,7 +48,6 @@ namespace sl2 {
         friend class Window;
     };
 
-    // 6. MOUSE
     class Mouse {
     public:
         static bool IsBtnDown(int btn);
@@ -65,7 +58,6 @@ namespace sl2 {
         friend class Window;
     };
 
-    // 7. WINDOW (OS & Context)
     class Window {
     public:
         Window(int w, int h, std::string title);
@@ -73,23 +65,22 @@ namespace sl2 {
         bool IsOpen() const;
         void Clear(Color c);
         void Display();
+        void Update(float& fps); // Added Update logic
     private:
         void* m_hwnd; void* m_hdc; void* m_hrc; bool m_running;
     };
 
-    // 8. ENTITY (Base Game Object)
     class Entity {
     public:
         Entity(float x, float y) : x(x), y(y), m_texID(0) {}
         virtual ~Entity() = default;
-        void Load(const std::string& path); // Uses File::LoadPNG
+        void Load(const std::string& path);
         virtual void Update(Time dt) = 0;
         virtual void Draw() = 0;
     protected:
         float x, y; unsigned int m_texID;
     };
 
-    // 9. BACKGROUND & 10. SOUND
     class Background { 
     public: 
         void SetImage(std::string path); 
@@ -100,7 +91,7 @@ namespace sl2 {
 
     class Sound {
     public:
-        Sound(std::string path); // Uses File::LoadWAV
+        Sound(std::string path);
         void Play();
     private:
         unsigned int m_bufID = 0;
